@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bibliothèque Musicale - Archives Pro</title>
+    <style>
+        /* === STYLES GÉNÉRAUX === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Ubuntu Mono', 'Courier New', monospace;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #252525;
+            border: 1px solid #3a3a3a;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        header {
+            background: #1e1e1e;
+            border-bottom: 2px solid #4a9eff;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4caf50;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 12px;
+        }
+
+        .toolbar {
+            background: #2a2a2a;
+            padding: 15px 20px;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            background: #3a3a3a;
+            color: #e0e0e0;
+            border: 1px solid #4a4a4a;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 13px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #fff;
+        }
+
+        button.primary {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: #fff;
+        }
+
+        button.primary:hover {
+            background: #45a049;
+        }
+
+        button.danger {
+            background: #d32f2f;
+            border-color: #d32f2f;
+            color: #fff;
+        }
+
+        button.danger:hover {
+            background: #c62828;
+        }
+
+        .filters {
+            padding: 15px 20px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            color: #888;
+            font-size: 12px;
+        }
+
+        select, input[type="text"], input[type="date"], input[type="file"], textarea {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            border: 1px solid #3a3a3a;
+            padding: 6px 10px;
+            font-family: inherit;
+            font-size: 13px;
+            border-radius: 3px;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        input[type="text"] {
+            width: 200px;
+        }
+
+        input[type="date"] {
+            color-scheme: dark;
+        }
+
+        .form-section {
+            padding: 20px;
+            background: #2a2a2a;
+            border-bottom: 1px solid #3a3a3a;
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            color: #4a9eff;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .form-group .helper-text {
+            color: #666;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .tracks-section {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .track-item {
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 3px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+
+        .track-item:hover {
+            border-color: #4a9eff;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.2);
+        }
+
+        .track-title {
+            color: #4caf50;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+
+        .track-title:hover {
+            color: #66bb6a;
+        }
+
+        .track-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag {
+            background: #3a3a3a;
+            color: #e0e0e0;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 11px;
+            border: 1px solid #4a4a4a;
+        }
+
+        .tag.langue {
+            border-color: #4a9eff;
+            color: #4a9eff;
+        }
+
+        .tag.type {
+            border-color: #ff9800;
+            color: #ff9800;
+        }
+
+        .track-audio {
+            margin: 10px 0;
+        }
+
+        audio {
+            width: 100%;
+            height: 32px;
+        }
+
+        audio::-webkit-media-controls-panel {
+            background: #1e1e1e;
+        }
+
+        .track-details {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #3a3a3a;
+            display: none;
+        }
+
+        .track-details.visible {
+            display: block;
+        }
+
+        .info-section {
+            background: #1e1e1e;
+            padding: 10px;
+            border-radius: 3px;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+
+        .info-section .section-title {
+            color: #4a9eff;
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 11px;
+            text-transform: uppercase;
+        }
+
+        .info-section .section-content {
+            color: #b0b0b0;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .info-dates {
+            display: flex;
+            gap: 20px;
+            margin: 10px 0;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .info-dates .date-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .info-dates .date-label {
+            color: #666;
+        }
+
+        .info-dates .date-value {
+            color: #4a9eff;
+        }
+
+        .track-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .track-actions button {
+            font-size: 12px;
+            padding: 6px 12px;
+        }
+
+        .message {
+            padding: 12px 20px;
+            margin: 15px 20px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+
+        .message.success {
+            background: #1b5e20;
+            border: 1px solid #4caf50;
+            color: #a5d6a7;
+        }
+
+        .message.error {
+            background: #b71c1c;
+            border: 1px solid #f44336;
+            color: #ffcdd2;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #1e1e1e;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #3a3a3a;
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4a4a4a;
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .toolbar, .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            input[type="text"] {
+                width: 100%;
+            }
+
+            .info-dates {
+                flex-direction: column;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>♪ Bibliothèque Musicale</h1>
+            <div class="subtitle">Archives complètes de tes morceaux</div>
+        </header>
+
+        <div class="toolbar">
+            <button class="primary" onclick="toggleForm()">+ Ajouter un morceau</button>
+            <button onclick="exportLibrary()">↓ Exporter les archives</button>
+            <button onclick="document.getElementById('importFile').click()">↑ Importer les archives</button>
+            <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importLibrary(event)">
+            <button class="danger" onclick="clearLibrary()">✕ Effacer tout</button>
+            <div style="margin-left: auto; color: #888; font-size: 12px;">
+                <span id="trackCount">0 morceaux</span>
+            </div>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <label>Recherche:</label>
+                <input type="text" id="searchInput" placeholder="Titre, paroles, prompt..." onkeyup="filterTracks()">
+            </div>
+            <div class="filter-group">
+                <label>Langue:</label>
+                <select id="filterLangue" onchange="filterTracks()">
+                    <option value="">Toutes</option>
+                    <option value="Français">Français</option>
+                    <option value="Anglais">Anglais</option>
+                    <option value="Autre">Autre</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Type:</label>
+                <select id="filterType" onchange="filterTracks()">
+                    <option value="">Tous</option>
+                    <option value="Morceau complet">Morceau complet</option>
+                    <option value="Extrait">Extrait</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-section" id="formSection">
+            <h2 style="color: #4a9eff; margin-bottom: 15px;" id="formTitle">Ajouter un morceau</h2>
+            <form id="trackForm" onsubmit="saveTrack(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Titre *</label>
+                        <input type="text" id="trackTitle" required placeholder="Nom du morceau">
+                    </div>
+                    <div class="form-group">
+                        <label>Fichier WAV *</label>
+                        <input type="file" id="trackFile" accept=".wav,audio/wav" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Langue *</label>
+                        <select id="trackLangue" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="Français">Français</option>
+                            <option value="Anglais">Anglais</option>
+                            <option value="Autre">Autre</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Type *</label>
+                        <select id="trackType" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="Morceau complet">Morceau complet</option>
+                            <option value="Extrait">Extrait</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Date de création originale</label>
+                        <input type="date" id="trackDateOriginal">
+                        <div class="helper-text">Date de génération Suno</div>
+                    </div>
+                    <div class="form-group">
+                        <label>Date de publication</label>
+                        <input type="date" id="trackDatePublication">
+                        <div class="helper-text">Si publié (optionnel)</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Prompt Suno</label>
+                        <textarea id="trackPrompt" placeholder="Le prompt complet utilisé pour générer ce morceau..." style="min-height: 100px;"></textarea>
+                        <div class="helper-text">Important pour l'archivage et la preuve de création</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Paroles</label>
+                        <textarea id="trackLyrics" placeholder="Tes paroles ici..."></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>Notes personnelles</label>
+                        <textarea id="trackNotes" placeholder="Modifications Audacity, versions, idées..." style="min-height: 80px;"></textarea>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" onclick="cancelForm()">Annuler</button>
+                    <button type="submit" class="primary">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+
+        <div id="messageZone"></div>
+
+        <div class="tracks-section" id="tracksSection">
+            <div class="loading">Chargement...</div>
+        </div>
+    </div>
+
+    <script>
+        // === INDEXEDDB SETUP ===
+        let db;
+        let editingId = null;
+
+        function initDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open('MusicLibrary', 1);
+                
+                request.onerror = () => reject('Erreur d\'ouverture de la base de données');
+                
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains('tracks')) {
+                        const objectStore = db.createObjectStore('tracks', { keyPath: 'id', autoIncrement: true });
+                        objectStore.createIndex('title', 'title', { unique: false });
+                        objectStore.createIndex('langue', 'langue', { unique: false });
+                        objectStore.createIndex('type', 'type', { unique: false });
+                    }
+                };
+            });
+        }
+
+        // === CRUD OPERATIONS ===
+        
+        function addTrack(track) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readwrite');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.add(track);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject('Erreur lors de l\'ajout');
+            });
+        }
+
+        function updateTrack(track) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readwrite');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.put(track);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject('Erreur lors de la mise à jour');
+            });
+        }
+
+        function getAllTracks() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readonly');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.getAll();
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject('Erreur de lecture');
+            });
+        }
+
+        function getTrack(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readonly');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.get(id);
+                
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject('Erreur de lecture');
+            });
+        }
+
+        function deleteTrack(id) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readwrite');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.delete(id);
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject('Erreur de suppression');
+            });
+        }
+
+        function clearAllTracks() {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction(['tracks'], 'readwrite');
+                const objectStore = transaction.objectStore('tracks');
+                const request = objectStore.clear();
+                
+                request.onsuccess = () => resolve();
+                request.onerror = () => reject('Erreur de suppression');
+            });
+        }
+
+        // === INITIALIZATION ===
+        
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initDB();
+                await displayTracks();
+            } catch (error) {
+                showMessage('Erreur d\'initialisation: ' + error, 'error');
+            }
+        });
+
+        // === FORM MANAGEMENT ===
+        
+        function toggleForm() {
+            const form = document.getElementById('formSection');
+            form.classList.toggle('active');
+            if (form.classList.contains('active')) {
+                document.getElementById('trackTitle').focus();
+            }
+        }
+
+        function cancelForm() {
+            document.getElementById('trackForm').reset();
+            document.getElementById('formSection').classList.remove('active');
+            document.getElementById('formTitle').textContent = 'Ajouter un morceau';
+            editingId = null;
+        }
+
+        async function saveTrack(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('trackTitle').value;
+            const langue = document.getElementById('trackLangue').value;
+            const type = document.getElementById('trackType').value;
+            const dateOriginal = document.getElementById('trackDateOriginal').value;
+            const datePublication = document.getElementById('trackDatePublication').value;
+            const prompt = document.getElementById('trackPrompt').value;
+            const lyrics = document.getElementById('trackLyrics').value;
+            const notes = document.getElementById('trackNotes').value;
+            const fileInput = document.getElementById('trackFile');
+            
+            if (fileInput.files.length === 0 && !editingId) {
+                showMessage('Veuillez sélectionner un fichier audio', 'error');
+                return;
+            }
+            
+            try {
+                let audioData = null;
+                let fileName = '';
+                
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    fileName = file.name;
+                    audioData = await fileToBase64(file);
+                } else if (editingId) {
+                    const existing = await getTrack(editingId);
+                    audioData = existing.audioData;
+                    fileName = existing.fileName;
+                }
+                
+                const track = {
+                    title: title,
+                    langue: langue,
+                    type: type,
+                    dateOriginal: dateOriginal,
+                    datePublication: datePublication,
+                    prompt: prompt,
+                    lyrics: lyrics,
+                    notes: notes,
+                    audioData: audioData,
+                    fileName: fileName,
+                    createdAt: editingId ? (await getTrack(editingId)).createdAt : new Date().toISOString()
+                };
+                
+                if (editingId) {
+                    track.id = editingId;
+                    await updateTrack(track);
+                    showMessage('Morceau mis à jour avec succès', 'success');
+                } else {
+                    await addTrack(track);
+                    showMessage('Morceau ajouté avec succès', 'success');
+                }
+                
+                await displayTracks();
+                cancelForm();
+            } catch (error) {
+                showMessage('Erreur lors de la sauvegarde: ' + error, 'error');
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject('Erreur de lecture du fichier');
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // === DISPLAY ===
+        
+        async function displayTracks() {
+            const section = document.getElementById('tracksSection');
+            const countSpan = document.getElementById('trackCount');
+            
+            try {
+                const allTracks = await getAllTracks();
+                const filtered = filterTracksArray(allTracks);
+                
+                countSpan.textContent = `${filtered.length} morceau${filtered.length > 1 ? 's' : ''}`;
+                
+                if (filtered.length === 0) {
+                    section.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🎵</div>
+                            <div>Aucun morceau dans tes archives</div>
+                            <div style="font-size: 12px; margin-top: 8px;">Clique sur "+ Ajouter un morceau" pour commencer</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                
+                section.innerHTML = filtered.map(track => `
+                    <div class="track-item">
+                        <div class="track-title" onclick="toggleDetails(${track.id})">
+                            🎵 ${escapeHtml(track.title)} 
+                            <span id="arrow-${track.id}" style="color: #666; font-size: 12px; font-weight: normal;">▼</span>
+                        </div>
+                        
+                        <div class="track-audio">
+                            <audio controls>
+                                <source src="${track.audioData}" type="audio/wav">
+                                Ton navigateur ne supporte pas la lecture audio.
+                            </audio>
+                        </div>
+                        
+                        <div class="track-details" id="details-${track.id}">
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #3a3a3a;">
+                                <div class="track-tags" style="margin-bottom: 15px;">
+                                    <span class="tag langue">${track.langue}</span>
+                                    <span class="tag type">${track.type}</span>
+                                </div>
+                                
+                                ${(track.dateOriginal || track.datePublication) ? `
+                                    <div class="info-dates">
+                                        ${track.dateOriginal ? `
+                                            <div class="date-item">
+                                                <span class="date-label">📅 Créé:</span>
+                                                <span class="date-value">${formatDate(track.dateOriginal)}</span>
+                                            </div>
+                                        ` : ''}
+                                        ${track.datePublication ? `
+                                            <div class="date-item">
+                                                <span class="date-label">🌐 Publié:</span>
+                                                <span class="date-value">${formatDate(track.datePublication)}</span>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                ` : ''}
+                                
+                                ${track.prompt ? `
+                                    <div class="info-section">
+                                        <div class="section-title">🎯 Prompt Suno</div>
+                                        <div class="section-content">${escapeHtml(track.prompt)}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${track.lyrics ? `
+                                    <div class="info-section">
+                                        <div class="section-title">🎤 Paroles</div>
+                                        <div class="section-content">${escapeHtml(track.lyrics)}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                ${track.notes ? `
+                                    <div class="info-section">
+                                        <div class="section-title">📝 Notes personnelles</div>
+                                        <div class="section-content">${escapeHtml(track.notes)}</div>
+                                    </div>
+                                ` : ''}
+                                
+                                <div class="track-actions">
+                                    <button onclick="editTrackForm(${track.id})">✎ Éditer</button>
+                                    <button class="danger" onclick="deleteTrackConfirm(${track.id})">✕ Supprimer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                section.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <div>Erreur de chargement</div>
+                        <div style="font-size: 12px; margin-top: 8px;">${error}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleDetails(id) {
+            const details = document.getElementById(`details-${id}`);
+            const arrow = document.getElementById(`arrow-${id}`);
+            details.classList.toggle('visible');
+            arrow.textContent = details.classList.contains('visible') ? '▲' : '▼';
+        }
+
+        // === FILTERING ===
+        
+        async function filterTracks() {
+            await displayTracks();
+        }
+
+        function filterTracksArray(tracks) {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const langueFilter = document.getElementById('filterLangue').value;
+            const typeFilter = document.getElementById('filterType').value;
+            
+            return tracks.filter(track => {
+                const matchSearch = !search || 
+                    track.title.toLowerCase().includes(search) ||
+                    (track.lyrics && track.lyrics.toLowerCase().includes(search)) ||
+                    (track.prompt && track.prompt.toLowerCase().includes(search));
+                
+                const matchLangue = !langueFilter || track.langue === langueFilter;
+                const matchType = !typeFilter || track.type === typeFilter;
+                
+                return matchSearch && matchLangue && matchType;
+            });
+        }
+
+        // === EDIT & DELETE ===
+        
+        async function editTrackForm(id) {
+            try {
+                const track = await getTrack(id);
+                if (!track) return;
+                
+                editingId = id;
+                
+                document.getElementById('trackTitle').value = track.title;
+                document.getElementById('trackLangue').value = track.langue;
+                document.getElementById('trackType').value = track.type;
+                document.getElementById('trackDateOriginal').value = track.dateOriginal || '';
+                document.getElementById('trackDatePublication').value = track.datePublication || '';
+                document.getElementById('trackPrompt').value = track.prompt || '';
+                document.getElementById('trackLyrics').value = track.lyrics || '';
+                document.getElementById('trackNotes').value = track.notes || '';
+                
+                document.getElementById('trackFile').removeAttribute('required');
+                
+                document.getElementById('formTitle').textContent = 'Éditer le morceau';
+                document.getElementById('formSection').classList.add('active');
+                document.getElementById('trackTitle').focus();
+            } catch (error) {
+                showMessage('Erreur lors de l\'édition: ' + error, 'error');
+            }
+        }
+
+        async function deleteTrackConfirm(id) {
+            if (!confirm('Es-tu sûr de vouloir supprimer ce morceau ?')) return;
+            
+            try {
+                await deleteTrack(id);
+                await displayTracks();
+                showMessage('Morceau supprimé', 'success');
+            } catch (error) {
+                showMessage('Erreur lors de la suppression: ' + error, 'error');
+            }
+        }
+
+        // === EXPORT/IMPORT ===
+        
+        async function exportLibrary() {
+            try {
+                const tracks = await getAllTracks();
+                
+                if (tracks.length === 0) {
+                    showMessage('Aucun morceau à exporter', 'error');
+                    return;
+                }
+                
+                const dataStr = JSON.stringify(tracks, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `archives-musicales-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                
+                URL.revokeObjectURL(url);
+                showMessage('Archives exportées avec succès', 'success');
+            } catch (error) {
+                showMessage('Erreur lors de l\'export: ' + error, 'error');
+            }
+        }
+
+        async function importLibrary(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (!Array.isArray(imported)) {
+                        throw new Error('Format invalide');
+                    }
+                    
+                    for (const track of imported) {
+                        delete track.id;
+                        await addTrack(track);
+                    }
+                    
+                    await displayTracks();
+                    showMessage(`${imported.length} morceau(x) importé(s) avec succès`, 'success');
+                } catch (error) {
+                    showMessage('Erreur lors de l\'importation: ' + error, 'error');
+                }
+            };
+            reader.readAsText(file);
+            
+            event.target.value = '';
+        }
+
+        async function clearLibrary() {
+            if (!confirm('⚠️ ATTENTION : Cette action va effacer TOUS tes morceaux de façon permanente. Es-tu absolument sûr ?')) return;
+            
+            try {
+                await clearAllTracks();
+                await displayTracks();
+                showMessage('Archives vidées', 'success');
+            } catch (error) {
+                showMessage('Erreur: ' + error, 'error');
+            }
+        }
+
+        // === UTILITIES ===
+        
+        function showMessage(text, type) {
+            const zone = document.getElementById('messageZone');
+            zone.innerHTML = `<div class="message ${type}">${text}</div>`;
+            setTimeout(() => {
+                zone.innerHTML = '';
+            }, 3000);
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('fr-FR', { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric' 
+            });
+        }
+    </script>
+</body>
+</html>
