@@ -1,5 +1,7 @@
 Suno local music library for managing your tracks
-🎵 Music Library for Suno - Free (Version en français au bas de la page)
+🎵 Music Library for Suno - Free
+
+(Version en français au bas de la page)
 
 ## Hi there
 
