@@ -123,7 +123,7 @@ A: Yes! It's standard HTML/CSS/JS. If you know a bit of code, you can customize 
 A: **Yes.** No ads, no premium, no tricks. Just sharing between creators.
 
 **Q: Who made this?**  
-A: Me (a Suno creator like you) with the help of **Claude** (Anthropic's AI). I needed a tool, Claude coded it for me, I'm sharing it. That's it! 🎉
+A:**Claude** (Anthropic's AI). I needed a tool, Claude coded it for me, I'm sharing it. That's it! 🎉
 
 **Q: Can I share / modify it?**  
 A: **Absolutely!** Do what you want with it. If you share it elsewhere, just mention it was created with Claude, that's cool. But you're not obligated.
@@ -317,7 +317,7 @@ R : Oui ! C'est du HTML/CSS/JS standard. Si tu connais un peu le code, tu peux t
 R : **Oui.** Pas de pub, pas de premium, pas de pièges. C'est juste un partage entre créateurs.
 
 **Q : Qui a fait ça ?**  
-R : Moi (créateur Suno comme vous) avec l'aide de **Claude** (l'IA d'Anthropic). J'avais besoin d'un outil, Claude me l'a codé, je le partage. Voilà ! 🎉
+R : **Claude** (l'IA d'Anthropic). J'avais besoin d'un outil, Claude me l'a codé, je le partage. Voilà ! 🎉
 
 **Q : Je peux le partager / modifier ?**  
 R : **Carrément !** Fais-en ce que tu veux. Si tu le partages ailleurs, mentionne juste que c'est créé avec Claude, c'est cool. Mais t'es pas obligé.
